@@ -1,5 +1,5 @@
 const express = require('express');
-// Import and require mysql2
+const sequelize = require('./config/connection');
 const mysql = require('mysql2');
 
 const PORT = process.env.PORT || 3001;
@@ -10,17 +10,15 @@ app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 
 // Connect to database
-const db = mysql.createConnection(
-  {
-    host: 'localhost',
-    // MySQL username,
-    user: 'root',
-    // TODO: Add MySQL password here
-    password: '',
-    database: 'departments_db'
-  },
-  console.log(`Connected to the departments_db database.`)
-);
+// const db = mysql.createConnection(
+//   {
+//     host: 'localhost',
+//     user: 'root',
+//     password: '',
+//     database: 'departments_db'
+//   },
+//   console.log(`Connected to the departments_db database.`)
+// );
 
 // Create a new department
 app.post('/api/new-department', ({ body }, res) => {
@@ -157,6 +155,6 @@ app.use((req, res) => {
   res.status(404).end();
 });
 
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+sequelize.sync({ force: true }).then(() => {
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 });
